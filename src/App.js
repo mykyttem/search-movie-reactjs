@@ -1,6 +1,7 @@
 import './App.css';
 import React, { Component } from 'react';
 import parseSearch from './parse';
+import Modal from './Modal';
 
 class App extends Component {
   constructor(props) {
@@ -8,6 +9,7 @@ class App extends Component {
     this.state = {
       results: null,
       inputValue: '',
+      selectedItem: null,
     };
   }
 
@@ -33,6 +35,16 @@ class App extends Component {
     }
   }
 
+  // open modal window     
+  openModal = (item) => {
+    this.setState({ selectedItem: item });
+  }
+
+  // close
+  closeModal = () => {
+    this.setState({ selectedItem: null });
+  }
+
   renderResults = () => {
     const { results } = this.state;
     const data = results && JSON.parse(results);
@@ -44,9 +56,13 @@ class App extends Component {
         <div>
           <div className="results-container">
             {items.map((item, index) => (
+              // results
               <div key={index} className="result-item">
+
                 {item.i && <img src={item.i.imageUrl} alt={item.l} className="poster" />}
                 <p className="title">{item.l}</p>
+                <button onClick={() => this.openModal(item)}>More</button> 
+
               </div>
             ))}
           </div>
@@ -73,6 +89,11 @@ class App extends Component {
         <button onClick={this.handleSearch}><i className="fas fa-search"></i>Search</button>
 
         {this.renderResults()}
+
+        {this.state.selectedItem && (
+          // show model window, if selectedItem not null
+          <Modal item={this.state.selectedItem} onClose={this.closeModal} />
+        )}
       </div>
     );
   }
